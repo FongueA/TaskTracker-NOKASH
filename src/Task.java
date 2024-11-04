@@ -1,8 +1,16 @@
 import java.util.Calendar;
 import java.util.Date;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import java.io.FileWriter;
 import java.io.IOException;
+//import java.io.File;
+import java.nio.file.Paths;
+//import java.text.ParseException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class Task {
 
@@ -27,21 +35,112 @@ public class Task {
 
     @SuppressWarnings("unchecked")
     private void registerTask(){
-        JSONObject taskAttributes = new JSONObject();
-        taskAttributes.put("ID",this.id);
-        taskAttributes.put("Description",this.description);
-        taskAttributes.put("Status",this.status);
-        taskAttributes.put("Created_At",this.createdAt.toString());
-        taskAttributes.put("Updated_At",this.updatedAt.toString());
+
+            String lastLine;
+            try {
+                FileWriter taskFile = new FileWriter(FILE_PATH,true);
+
+                try{
+                    List <String> lines  = Files.readAllLines(Paths.get(FILE_PATH));
+                    
+                    if (!lines.isEmpty()){
+                        lastLine = lines.get(lines.size() - 1);
+                        JSONParser myParser = new JSONParser();
+                        try{ 
+                            JSONObject theLastLine = (JSONObject) myParser.parse(lastLine);
+                            Long id = (Long) theLastLine.get("ID");
+        
+                            JSONObject taskAttributes = new JSONObject();
+                            taskAttributes.put("ID",id + 1);
+                            taskAttributes.put("Description",this.description);
+                            taskAttributes.put("Status",this.status);
+                            taskAttributes.put("Created_At",this.createdAt.toString());
+                            taskAttributes.put("Updated_At",this.updatedAt.toString());
+                            taskFile.write(taskAttributes.toJSONString()+"\n");
+                            taskFile.close();
+
+                        } catch(ParseException e){
+                            e.printStackTrace();
+                        }
+
+                    } else {
+
+                        JSONObject taskAttributes = new JSONObject();
+                        taskAttributes.put("ID",this.id);
+                        taskAttributes.put("Description",this.description);
+                        taskAttributes.put("Status",this.status);
+                        taskAttributes.put("Created_At",this.createdAt.toString());
+                        taskAttributes.put("Updated_At",this.updatedAt.toString());
+                        taskFile.write(taskAttributes.toJSONString()+"\n");
+                        taskFile.close();
+                        
+                    }  
+                } catch(IOException e){
+                    e.printStackTrace();
+                }
+            
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+        
 
         //JSONObject entireTask= new JSONObject();
-        try {
-            FileWriter taskFile = new FileWriter(FILE_PATH,true);
-            taskFile.write(taskAttributes.toJSONString()+"\n");
-            taskFile.close();
-        } catch(IOException e){
+       /* String lastLine;
+        try{
+            List <String> lines  = Files.readAllLines(Paths.get(FILE_PATH));
+            if (!lines.isEmpty()){
+                lastLine = lines.get(lines.size() - 1);
+                JSONParser myParser = new JSONParser();
+                try{ 
+                    JSONObject theLastLine = (JSONObject) myParser.parse(lastLine);
+                    Long id = (Long) theLastLine.get("ID");
+
+                    JSONObject taskAttributes = new JSONObject();
+                    taskAttributes.put("ID",id + 1);
+                    taskAttributes.put("Description",this.description);
+                    taskAttributes.put("Status",this.status);
+                    taskAttributes.put("Created_At",this.createdAt.toString());
+                    taskAttributes.put("Updated_At",this.updatedAt.toString());
+
+                    try {
+                        FileWriter taskFile = new FileWriter(FILE_PATH,true);
+                        taskFile.write(taskAttributes.toJSONString()+"\n");
+                        taskFile.close();
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    } 
+    
+                } catch(ParseException e){
+                    e.printStackTrace();
+                }
+            
+
+
+            }
+            else {
+
+                JSONObject taskAttributes = new JSONObject();
+                taskAttributes.put("ID",this.id);
+                taskAttributes.put("Description",this.description);
+                taskAttributes.put("Status",this.status);
+                taskAttributes.put("Created_At",this.createdAt.toString());
+                taskAttributes.put("Updated_At",this.updatedAt.toString());
+
+                try {
+                    FileWriter taskFile = new FileWriter(FILE_PATH,true);
+                    taskFile.write(taskAttributes.toJSONString()+"\n");
+                    taskFile.close();
+                } catch(IOException e){
+                    e.printStackTrace();
+                } 
+
+            }
+        }
+        catch(Exception e){
             e.printStackTrace();
-        } 
+        }*/
+        
+    
 
 
     }
