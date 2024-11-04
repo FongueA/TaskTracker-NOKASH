@@ -35,7 +35,7 @@ public class TaskTracker {
 
         System.out.println("");
     }
-    public static void main(String[] args) throws IOException, ParseException{
+    public static void main(String[] args) throws IOException, ParseException, Exception{
 
         int nb_arguments = args.length;
         //System.out.println(nb_arguments);
